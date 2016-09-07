@@ -1,0 +1,25 @@
+{% import "_includes/forms" as forms %}
+
+{% block content %}
+    <div class="commerceRegisterOnCheckoutSettings">
+        <p><small>Version: {{ version }}</small></p>
+        <p>
+            {{ description }}
+        </p>
+        <hr>
+        <div>
+
+            <h4>Debugging?</h4>
+            {{
+                forms.lightswitch({
+                    onLabel:    "On",
+                    offLabel:   "Off",
+                    name:       "debug",
+                    on:         settings.debug,
+                })
+            }}
+            <p>Makes <em>all</em> log messages get logged.</p> 
+            <p>(<code>LogLevel::Warning</code> and <code>LogLevel::Error</code> are always logged).</p>
+
+        </div>
+{% endblock %}
