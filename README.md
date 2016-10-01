@@ -38,7 +38,7 @@ These two inputs are:
 
 Example:
 
-    <input type="checkbox" value="true" id="registerUser" checked>
+    <input type="checkbox" value="true" name="registerUser" checked>
     <input type="password" value="" placeholder="New Password (min. 6 characters)" name="password">
 
 By default, this plugin looks at the current order's billing address for the first and last name data.  You can change that behaviour by instead explicitly passing this data in two more input variables:
