@@ -20,8 +20,6 @@ class CommerceRegisterOnCheckoutVariable
      */
     public function checkoutRegistered(){
 
-        CommerceRegisterOnCheckoutPlugin::log("checkoutRegistered");
-
         $return = "";
         
         $registered = craft()->httpSession->get("registered");
@@ -35,8 +33,6 @@ class CommerceRegisterOnCheckoutVariable
     }
 
     public function checkoutAccount(){
-
-        CommerceRegisterOnCheckoutPlugin::log("checkoutAccount");
 
         $return = "";
         

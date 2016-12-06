@@ -198,6 +198,8 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function init(){
 
+        self::$settings = $this->getSettings();
+
         // Listen to onOrderComplete (not onBefore...) as we definitely don't want to make submitting orders have more potential issues...
         // We check our DB for a registration record, if there is one, we complete registration & for security delete the record
         craft()->on('commerce_orders.onOrderComplete', function($event){
