@@ -21,32 +21,47 @@ Currently only allows for regsitering users with their username set to their ema
 
 ## Configuring Commerce Register on Checkout
 
-You can turn on some extra logging in the plugin settings - it's probably fine to leave this on even on your live server - it just logs all succesful user registrations in addition to any errors/warnings.
+You can turn on some extra logging in the plugin settings - it's probably fine to leave this on even on your live server - it just logs all successful user registrations in addition to any errors/warnings.
 
 ## Using Commerce Register on Checkout
 
-This plugin listens to the `commerce_orders.onOrderComplete` event (rather than the `onBeforeOrderComplete` event - which might cause issues/confusion if the order payment fails but the user was registered - also, we don't want anything getting in the way of taking orders!).
+At any point in your checkout flow before the final payment/order completion, you need to make one additional POST request.  I do this by ajax just before the payment form is submitted.
 
-You will need to add two input variables to the form you use to post to the `commerce/payments/pay` controller (i.e. your payment form).  
+This request must post the users desired password to the `saveRegistrationDetails` controller.  This password is then encyrypted using Craft's built in encryption mechanisms, and saved along with the order number to a temporary database record.
 
-These two inputs are:
+It's very simple, here's some sample code:
 
-* `registerUser` to trigger the user registration process
-* `password` which holds the user's new password 
-
-(You should validate the password on the front end to make sure it meets Craft's minimum 6 character requirement).
-
-Example:
+HTML Form:
 
     <input type="checkbox" value="true" id="registerUser" checked>
     <input type="password" value="" placeholder="New Password (min. 6 characters)" name="password">
 
-By default, this plugin looks at the current order's billing address for the first and last name data.  You can change that behaviour by instead explicitly passing this data in two more input variables:
+JS:
 
-* `firstName`
-* `lastName`
+        if ($('#registerUser').prop('checked')) {
+            var pw_value = $('input[type="password"]').val();
+            var pw_error = '';
+            if (pw_value.length < 6) {
+                pw_error = "Password length must be 6 or more characters";
+            }
+            if (pw_error) {
+                alert(pw_error);
+            }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/actions/commerceRegisterOnCheckout/saveRegistrationDetails',
+                    data: {
+                        CRAFT_CSRF_TOKEN: window.csrfTokenValue,
+                        password: pw_value,
+                    }
+                });
+            }
+        }
 
-Commerce Register on Checkout will, if all goes well, now register the user once the order is complete.  It will also immediately log them in, and assign  them to the default user group, just like a normal user registration.
+(NB - as above you should validate the password on the front end to make sure it meets Craft's minimum 6 character requirement, or the user registration later may fail).
+
+The plugin then listens to the `commerce_orders.onOrderComplete` event.  For each completed order it looks for a saved record, and if it finds one then registers the user.  It will also immediately log them in, and assign  them to the default user group, just like a normal user registration.
 
 ## Handling Success & Errors
 
@@ -57,8 +72,9 @@ Here's some sketch code to get you started:
 ```
 
     {# Get the results of user registration, if there are any... #}
-    {% set registered = craft.commerceRegisterOnCheckout.checkoutRegistration().registered ?? null %}
-    {% set account = craft.commerceRegisterOnCheckout.checkoutRegistration().account ?? null %}
+    {% set registered = craft.commerceRegisterOnCheckout.checkoutRegistered ?? null %}
+    {% set account = craft.commerceRegisterOnCheckout.checkoutAccount ?? null %}
+
 
     {# Was registration attempted? #}
     {% if registered|length %}
@@ -72,11 +88,19 @@ Here's some sketch code to get you started:
             {% if account|length %}
                 {% if "has already been taken" in account.getError('email') %}
 
-                <etc, e.g. present a user registration form with as much filled in as possible>
+                ... Point ou they are already registered...
+                
+            {% else %}
+                ...etc, e.g. present a user registration form with as much filled in as possible>
+            }
 ```
 
 
 ## Commerce Register on Checkout Changelog
+
+### 0.0.2 -- 2016.12.06
+
+* Works with offsite gateways.  Required breaking changes so review the docs!!
 
 ### 0.0.1 -- 2016.09.06
 

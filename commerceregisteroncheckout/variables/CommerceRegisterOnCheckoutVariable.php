@@ -17,27 +17,38 @@ class CommerceRegisterOnCheckoutVariable
 {
     /**
      * Returns the session data lodged during registration at checkout time
-     *
-     * @param $consume boolean - by default this data behaves like flash data, it is removed when it is read.  
-     *                           You can pass in false to stop this happening
-     * @return array ['registered'=>,'account'=>]
      */
-    public function checkoutRegistration($consume=false){
+    public function checkoutRegistered(){
 
-        $return = [];
+        CommerceRegisterOnCheckoutPlugin::log("checkoutRegistered");
+
+        $return = "";
         
         $registered = craft()->httpSession->get("registered");
-        if($registered) $return['registered'] = $registered;
+        if($registered) $return = $registered;
         
-        $account = craft()->httpSession->get("account");
-        if($account) $return['account'] = $account;
+        // For some reason these functions are called multiple times on the order complete template...
+        // So we can't remove them here.
+        //craft()->httpSession->remove("registered");
 
-        //This is problematic as we need to test if defined which triggers the consume...
-        //but then we need to test the values, so leave it for now..
-        // if($consume){
-        //     craft()->httpSession->remove("registered");
-        //     craft()->httpSession->remove("account");
-        // }
         return $return;
     }
+
+    public function checkoutAccount(){
+
+        CommerceRegisterOnCheckoutPlugin::log("checkoutAccount");
+
+        $return = "";
+        
+        $account = craft()->httpSession->get("account");
+        if($account) $return = $account;
+
+        // For some reason these functions are called multiple times on the order complete template...
+        // So we can't remove them here.        
+        //craft()->httpSession->remove("account");
+
+        return $return;
+    }
+
+
 }
