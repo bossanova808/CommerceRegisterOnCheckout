@@ -87,7 +87,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function getVersion()
     {
-        return '0.0.2';
+        return '0.0.3';
     }
 
     /**
@@ -149,6 +149,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function onBeforeInstall()
     {
+        craft()->db->createCommand()->createTable("commerceregisteroncheckout",["orderNumber"=>"varchar","EPW"=>"varchar"]);        
     }
 
     /**
@@ -161,6 +162,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function onBeforeUninstall()
     {
+       craft()->db->createCommand()->dropTable("commerceregisteroncheckout"); 
     }
 
     /**
