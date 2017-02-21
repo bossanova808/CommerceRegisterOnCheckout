@@ -87,7 +87,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function getVersion()
     {
-        return '0.0.3';
+        return '0.0.4';
     }
 
     /**
@@ -95,7 +95,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function getSchemaVersion()
     {
-        return '0.0.1';
+        return '0.0.2';
     }
 
     /**
@@ -149,7 +149,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function onBeforeInstall()
     {
-        craft()->db->createCommand()->createTable("commerceregisteroncheckout",["orderNumber"=>"varchar","EPW"=>"varchar"]);        
+        craft()->db->createCommand()->createTable("commerceregisteroncheckout",["orderNumber"=>"varchar","EPW"=>"varchar", "lastUsedShippingAddressId"=>"int(11) DEFAULT NULL", "lastUsedBillingAddressId", "int(11) DEFAULT NULL"]);        
     }
 
     /**
@@ -208,7 +208,8 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
 
             $order = $event->params['order'];
 
-            $result = craft()->db->createCommand()->setText("select * from craft_commerceregisteroncheckout where orderNumber='" . $order->number ."'")->queryAll();
+            //Get all records, latest first
+            $result = craft()->db->createCommand()->setText("select * from craft_commerceregisteroncheckout where orderNumber='" . $order->number ."' ORDER BY dateUpdated DESC")->queryAll();
 
             // Short circuit if we don't have registration details for this order
             if (!$result){
@@ -218,11 +219,12 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
                 
             CommerceRegisterOnCheckoutPlugin::log("Register on checkout record FOUND for order: " . $order->number);
 
-            // Clean up the DB so we're not keeping evem encrypted passwords around for nay longer than is necessary
+            // Clean up the DB so we're not keeping even encrypted passwords around for any longer than is necessary
             $this->cleanup($order);
 
             // Retrieve and decrypt the stored password, short circuit if we can't get it...           
             try {
+                //refer only to the latest record
                 $encryptedPassword = $result[0]['EPW'];
                 $password = craft()->security->decrypt(base64_decode($encryptedPassword));
             }
@@ -232,6 +234,18 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
                 return false;                   
             }
             
+            //Grab our other saved data
+            try {
+                $lastUsedShippingAddressId = $result[0]['lastUsedShippingAddressId'];
+                $lastUsedBillingAddressId = $result[0]['lastUsedBillingAddressId'];
+            }
+            catch (Exception $e) {
+                CommerceRegisterOnCheckoutPlugin::logError("Couldn't retrieve the lastUsedAddress Ids");
+                CommerceRegisterOnCheckoutPlugin::logError($e);
+                $lastUsedShippingAddressId = 0;
+                $lastUsedBillingAddressId = 0;                  
+            }
+
             $firstName = "";
             $lastName = "";     
 
@@ -270,6 +284,22 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
                 craft()->userSession->loginByUserId($user->id);
                 // & record we've done this so the template variable can be set
                 craft()->httpSession->add("registered", true);
+
+                //Try & copy the last used addresses into the new record
+                $res = craft()->db->createCommand()->setText("select * from craft_commerce_customers where email='" . $order->email ."' ORDER BY dateUpdated DESC")->queryAll();
+
+                if ($res) {
+                    try {
+                        $updateResult = craft()->db->createCommand()->update('commerce_customers',['lastUsedShippingAddressId'=>$lastUsedShippingAddressId, "lastUsedBillingAddressId"=>$lastUsedBillingAddressId], 'id=:id', array(':id'=>$res[0]['id']));
+                    }
+                    catch (Exception $e) {
+                        CommerceRegisterOnCheckoutPlugin::logError("Couldn't update the lastUsedAddress Ids");  
+                        CommerceRegisterOnCheckoutPlugin::logError($e);             
+                    }                
+                }
+                else {
+                    CommerceRegisterOnCheckoutPlugin::logError("Couldn't find the guest user for the lastUsedAddress Ids");
+                }
 
                 return true;
             }

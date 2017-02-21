@@ -18,9 +18,9 @@ class CommerceRegisterOnCheckoutController extends BaseController
         $password = $vars['password'];
         $encryptedPassword = base64_encode(craft()->security->encrypt($password));
 
-        CommerceRegisterOnCheckoutPlugin::log("Saving registration record for order: " . $cart->number);
+        CommerceRegisterOnCheckoutPlugin::log("Saving registration record for order: " . $cart->number ." lusaid " . $cart->shippingAddress->id . " lubaid " . $cart->billingAddress->id);
     
-        $result = craft()->db->createCommand()->insert("commerceregisteroncheckout",["orderNumber"=>$cart->number, "EPW"=>$encryptedPassword]);
+        $result = craft()->db->createCommand()->insert("commerceregisteroncheckout",["orderNumber"=>$cart->number, "EPW"=>$encryptedPassword, "lastUsedShippingAddressId"=> $cart->shippingAddress->id, "lastUsedBillingAddressId"=>$cart->billingAddress->id ]);
 
         // Appropriate Ajax responses...
         if($ajax){

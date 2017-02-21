@@ -15,9 +15,19 @@ Commerce Register on Checkout has been tested with Craft 2.6+ and Commerce 1.1+,
 
 ## Commerce Register on Checkout Overview
 
-This plugin allows you to add user registration as part of your Commerce checkout process.  
+This plugin allows you to more easily add user registration as part of your Commerce checkout process.  
 
 Currently only allows for regsitering users with their username set to their email - however given commerce keys everything by the email, this is the most natural set up anyway.
+
+As of 0.0.4 it also sets the last used billing and shipping address IDs so that the new users immediately get access to their address records for their next order (this does not occur if you integrate a standard Craft registration form).
+
+## Why Not Use A Standard Craft Registation Form?
+
+An easy solution to this issue is to present a mostly pre-filled form to the user immediately following checkout - and of course this works fine and means one less plugin, which is a good thing.  However, from a business perspective and based on real world experience, you will see *vastly* lower user registration numbers with this method.
+
+See discussion here: https://craftcms.stackexchange.com/questions/18974/register-a-user-as-part-of-a-commerce-checkout/18993#18993
+
+In short, this plugin  allows for a more integrated approach - registering the user _during_ the actual chefkout, which signifcantly increases the number of users that will register, and this has many potential business benefits of course.
 
 ## Configuring Commerce Register on Checkout
 
@@ -97,6 +107,14 @@ Here's some sketch code to get you started:
 
 
 ## Commerce Register on Checkout Changelog
+
+### 0.0.4 -- 2017.01.21
+
+* Immediately sets the last used billing and shipping address IDs on the commerce_customer record so next time they login they will have their addresses ready to use
+
+### 0.0.3 -- 2017.01.18
+
+* Fix bug in db creation
 
 ### 0.0.2 -- 2016.12.06
 

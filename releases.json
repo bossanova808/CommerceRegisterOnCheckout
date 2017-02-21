@@ -1,5 +1,21 @@
 [
     {
+        "version": "0.0.4",
+        "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.4.zip",
+        "date": "2017-02-21T05:41:01.158Z",
+        "notes": [
+            "[Added] Set the last used shipping & billing address Ids so the newly created users immediately get to use their address records"
+        ]
+    },  
+    {
+        "version": "0.0.3",
+        "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.3.zip",
+        "date": "2017-02-18T05:41:01.158Z",
+        "notes": [
+            "[Fixed] Create database on install, not just on up migration...."
+        ]
+    },    
+    {
         "version": "0.0.1",
         "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.1.zip",
         "date": "2016-09-06T05:41:01.158Z",
