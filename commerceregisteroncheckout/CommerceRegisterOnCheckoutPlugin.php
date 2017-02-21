@@ -87,7 +87,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function getVersion()
     {
-        return '0.0.4';
+        return '0.0.5';
     }
 
     /**
@@ -149,7 +149,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function onBeforeInstall()
     {
-        craft()->db->createCommand()->createTable("commerceregisteroncheckout",["orderNumber"=>"varchar","EPW"=>"varchar", "lastUsedShippingAddressId"=>"int(11) DEFAULT NULL", "lastUsedBillingAddressId", "int(11) DEFAULT NULL"]);        
+        craft()->db->createCommand()->createTable("commerceregisteroncheckout",["orderNumber"=>"varchar","EPW"=>"varchar", "lastUsedShippingAddressId"=>"integer", "lastUsedBillingAddressId" => "integer"]);        
     }
 
     /**

@@ -1,8 +1,16 @@
 [
     {
+        "version": "0.0.5",
+        "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.5.zip",
+        "date": "2017-02-21T05:41:01.158Z",
+        "notes": [
+            "[Fix] Fix install error with 0.0.4 due to odd differing syntac between createTable and addColumnAfter"
+        ]
+    },  
+    {
         "version": "0.0.4",
         "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.4.zip",
-        "date": "2017-02-21T05:41:01.158Z",
+        "date": "2017-02-20T05:41:01.158Z",
         "notes": [
             "[Added] Set the last used shipping & billing address Ids so the newly created users immediately get to use their address records"
         ]
