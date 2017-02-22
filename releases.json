@@ -1,10 +1,18 @@
 [
     {
+        "version": "0.0.6",
+        "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.6.zip",
+        "date": "2017-02-22T05:41:01.158Z",
+        "notes": [
+            "[Added] Transfer address records to the newly created Craft User"
+        ]
+    },  
+    {
         "version": "0.0.5",
         "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.5.zip",
         "date": "2017-02-21T05:41:01.158Z",
         "notes": [
-            "[Fix] Fix install error with 0.0.4 due to odd differing syntac between createTable and addColumnAfter"
+            "[Fix] Fix install error with 0.0.4 due to odd differing syntax between createTable and addColumnAfter"
         ]
     },  
     {

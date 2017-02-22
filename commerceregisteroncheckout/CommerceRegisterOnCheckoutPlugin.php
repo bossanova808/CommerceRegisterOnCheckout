@@ -87,7 +87,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function getVersion()
     {
-        return '0.0.5';
+        return '0.0.6';
     }
 
     /**
@@ -288,14 +288,45 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
                 //Try & copy the last used addresses into the new record
                 $res = craft()->db->createCommand()->setText("select * from craft_commerce_customers where email='" . $order->email ."' ORDER BY dateUpdated DESC")->queryAll();
 
+                //CommerceRegisterOnCheckoutPlugin::log($res);
+
                 if ($res) {
+                    // $id will be the new customer record Id,  $oldId is the old customer record Id.
+                    try{
+                        $newId = $res[0]['id'];
+                        $oldId = $res[1]['id'];
+                        // ....the new Craft user id
+                        $userId = $res[0]['userId'];
+                        CommerceRegisterOnCheckoutPlugin::log("Updating customer and address records for newly created user.  NewId: $newId, OldId: $oldId, Craft User id: $userId");
+                    }
+                    catch (Exception $e) {
+                        CommerceRegisterOnCheckoutPlugin::logError("Issue retrieving newId, oldId, or userId  - can't update addresses to new user.");  
+                        CommerceRegisterOnCheckoutPlugin::logError($e);
+                        // User registration did work, though....
+                        return true;             
+                    }  
+
+                    // First try and update the last used addresses in new record in the commerce_customers table
                     try {
-                        $updateResult = craft()->db->createCommand()->update('commerce_customers',['lastUsedShippingAddressId'=>$lastUsedShippingAddressId, "lastUsedBillingAddressId"=>$lastUsedBillingAddressId], 'id=:id', array(':id'=>$res[0]['id']));
+                        $updateResult = craft()->db->createCommand()->update('commerce_customers',['lastUsedShippingAddressId'=>$lastUsedShippingAddressId, "lastUsedBillingAddressId"=>$lastUsedBillingAddressId], 'id=:id', array(':id'=>$newId));
+                        CommerceRegisterOnCheckoutPlugin::log("Updated ($updateResult) customer records. To lusaId: $lastUsedShippingAddressId, lubaId: $lastUsedBillingAddressId");
                     }
                     catch (Exception $e) {
                         CommerceRegisterOnCheckoutPlugin::logError("Couldn't update the lastUsedAddress Ids");  
                         CommerceRegisterOnCheckoutPlugin::logError($e);             
-                    }                
+                    } 
+                    
+                    // Now try and update the commerce_customers_addresses table and move the address records over to the 
+                    try {
+                        $updateResult = craft()->db->createCommand()->update('commerce_customers_addresses',['customerId'=>$newId],'customerId=:oldId', array(':oldId'=>$oldId));  
+
+                        CommerceRegisterOnCheckoutPlugin::log("Updated ($updateResult) address records. From customer id: $oldId to new id: $newId");                   
+                    }              
+                    catch (Exception $e) {
+                        CommerceRegisterOnCheckoutPlugin::logError("Couldn't transfer addresses to the new user id");  
+                        CommerceRegisterOnCheckoutPlugin::logError($e);  
+                    }  
+            
                 }
                 else {
                     CommerceRegisterOnCheckoutPlugin::logError("Couldn't find the guest user for the lastUsedAddress Ids");
