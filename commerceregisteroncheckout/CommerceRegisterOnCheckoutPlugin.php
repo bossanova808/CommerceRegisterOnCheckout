@@ -17,6 +17,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
 {
 
     protected static $settings;
+    protected static $tableName;
 
     /**
      * Static log functions for this plugin
@@ -87,7 +88,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function getVersion()
     {
-        return '0.0.6';
+        return '0.0.7';
     }
 
     /**
@@ -177,7 +178,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
     private function cleanUp($order){
 
         // Delete the DB record for this order
-        craft()->db->createCommand()->setText("delete from craft_commerceregisteroncheckout where orderNumber='" . $order->number . "'")->execute();
+        craft()->db->createCommand()->setText("delete from " . self::$tableName ." where orderNumber='" . $order->number . "'")->execute();
 
         // Also take the chance to clean out any old order records that are associated with incomplete carts older than the purge duration
         // Code from getCartsToPurge in Commerce_CartService.php
@@ -190,7 +191,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
         
         // Added this...
         $mysqlEdge = $edge->format('Y-m-d H:i:s');
-        craft()->db->createCommand()->setText("delete from craft_commerceregisteroncheckout where dateUpdated<='" . $mysqlEdge . "'")->execute();
+        craft()->db->createCommand()->setText("delete from " . self::$tableName ." where dateUpdated<='" . $mysqlEdge . "'")->execute();
 
     }
 
@@ -201,6 +202,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
     public function init(){
 
         self::$settings = $this->getSettings();
+        self::$tableName = craft()->config->get('tablePrefix', ConfigFile::Db) . "_" . "commerceregisteroncheckout";
 
         // Listen to onOrderComplete (not onBefore...) as we definitely don't want to make submitting orders have more potential issues...
         // We check our DB for a registration record, if there is one, we complete registration & for security delete the record
@@ -209,7 +211,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
             $order = $event->params['order'];
 
             //Get all records, latest first
-            $result = craft()->db->createCommand()->setText("select * from craft_commerceregisteroncheckout where orderNumber='" . $order->number ."' ORDER BY dateUpdated DESC")->queryAll();
+            $result = craft()->db->createCommand()->setText("select * from " . self::$tableName ." where orderNumber='" . $order->number ."' ORDER BY dateUpdated DESC")->queryAll();
 
             // Short circuit if we don't have registration details for this order
             if (!$result){
@@ -346,35 +348,5 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
         }); 
 
     }
-
-    // @TODO - delete below if a no controller method can't be found...
-
-    // Listen to onOrderSave and if there is field set on the order fields[registerOnCheckout] AND there's a password in POST
-    // Then save an encrypted record to the DB for retrieval later onOrderComplete
-    // I used onBeforeSaveOrder here as I saw some issues with transactions when using onSaveOrder and I can't see 
-    // any reason on to use onBeforeSaveOrder
-    
-    // craft()->on('commerce_orders.onBeforeSaveOrder', function($event){
-
-    //     $order = $event->params['order'];
-        
-    //     if($order->registerOnCheckout=="true"){
-            
-    //         $order = $event->params['order'];
-
-    //         $password = craft()->request->getParam('password');
-    //         if($password){
-
-    //             CommerceRegisterOnCheckoutPlugin::log("Saving registration record for order: " . $order->number . " (it's normal to see this more than once)");
-
-    //             // delete any old records (saveOrder gets called quite a bit)
-    //             $result = craft()->db->createCommand()->setText("delete from craft_commerceregisteroncheckout where orderNumber='" . $order->number ."'")->execute();
-    //             // save the new record 
-    //             $encryptedPassword = base64_encode(craft()->security->encrypt($password));
-    //             craft()->db->createCommand()->insert("commerceregisteroncheckout",["orderNumber"=>$order->number, "encryptedPassword"=>$encryptedPassword]);
-    //         }
-    //     }
-
-    // });
 
 }

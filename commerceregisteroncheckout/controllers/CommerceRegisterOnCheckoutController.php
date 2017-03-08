@@ -11,6 +11,8 @@ class CommerceRegisterOnCheckoutController extends BaseController
         //Must be called by POST
         $this->requirePostRequest();
 
+        CommerceRegisterOnCheckoutPlugin::log("actionSaveRegistrationDetails");
+
         $ajax = craft()->request->isAjaxRequest();
         $cart = craft()->commerce_cart->getCart();
         $vars = craft()->request->getPost();
@@ -18,9 +20,23 @@ class CommerceRegisterOnCheckoutController extends BaseController
         $password = $vars['password'];
         $encryptedPassword = base64_encode(craft()->security->encrypt($password));
 
-        CommerceRegisterOnCheckoutPlugin::log("Saving registration record for order: " . $cart->number ." lusaid " . $cart->shippingAddress->id . " lubaid " . $cart->billingAddress->id);
+        $number = 0;
+        $lusaid = 0;
+        $lubaid = 0;
+
+        $number = $cart->number;
+
+        if($cart->shippingAddress){
+            $lusaid = $cart->shippingAddress->id;
+        }
+        
+        if($cart->billingAddress){
+           $lubaid = $cart->billingAddress->id;
+        }
+
+        CommerceRegisterOnCheckoutPlugin::log("Saving registration record for order: " . $number ." lusaid " . $lusaid . " lubaid " . $lubaid);
     
-        $result = craft()->db->createCommand()->insert("commerceregisteroncheckout",["orderNumber"=>$cart->number, "EPW"=>$encryptedPassword, "lastUsedShippingAddressId"=> $cart->shippingAddress->id, "lastUsedBillingAddressId"=>$cart->billingAddress->id ]);
+        $result = craft()->db->createCommand()->insert("commerceregisteroncheckout",["orderNumber"=>$number, "EPW"=>$encryptedPassword, "lastUsedShippingAddressId"=> $lusaid, "lastUsedBillingAddressId"=>$lubaid ]);
 
         // Appropriate Ajax responses...
         if($ajax){
