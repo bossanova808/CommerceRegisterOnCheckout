@@ -305,7 +305,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
                         CommerceRegisterOnCheckoutPlugin::logError("Issue retrieving newId, oldId, or userId  - can't update addresses to new user.");  
                         CommerceRegisterOnCheckoutPlugin::logError($e);
                         // User registration did work, though....
-                        craft()->commerceRegisterOnCheckout->onRegisterComplete(new Event($this, array('order' => $order, 'user' => $user)));
+                        craft()->commerceRegisterOnCheckout->onRegisterComplete($order, $user);
                         return true;
                     }
 
@@ -335,7 +335,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
                     CommerceRegisterOnCheckoutPlugin::logError("Couldn't find the guest user for the lastUsedAddress Ids");
                 }
 
-                craft()->commerceRegisterOnCheckout->onRegisterComplete(new Event($this, array('order' => $order, 'user' => $user)));
+                craft()->commerceRegisterOnCheckout->onRegisterComplete($order, $user);
                 return true;
             }
 

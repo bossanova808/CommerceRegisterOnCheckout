@@ -6,12 +6,13 @@ class CommerceRegisterOnCheckoutService extends BaseApplicationComponent
     /**
      * Event method
      *
-     * @param \CEvent $event
+     * @param Commerce_OrderModel $order
+     * @param UserModel $user
      *
      * @throws \CException
      */
-    public function onRegisterComplete(\CEvent $event)
+    public function onRegisterComplete(Commerce_OrderModel $order, UserModel $user)
     {
-        $this->raiseEvent('onRegisterComplete', $event);
+        $this->raiseEvent('onRegisterComplete', new Event($this, array('order' => $order, 'user' => $user)));
     }
 }
