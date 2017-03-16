@@ -88,7 +88,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function getVersion()
     {
-        return '0.0.7';
+        return '0.0.8';
     }
 
     /**
