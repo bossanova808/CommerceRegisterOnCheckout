@@ -17,7 +17,6 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
 {
 
     protected static $settings;
-    protected static $tableName;
 
     /**
      * Static log functions for this plugin
@@ -202,7 +201,6 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
     public function init(){
 
         self::$settings = $this->getSettings();
-        self::$tableName = craft()->config->get('tablePrefix', ConfigFile::Db) . "_" . "commerceregisteroncheckout";
 
         // Listen to onOrderComplete (not onBefore...) as we definitely don't want to make submitting orders have more potential issues...
         // We check our DB for a registration record, if there is one, we complete registration & for security delete the record
