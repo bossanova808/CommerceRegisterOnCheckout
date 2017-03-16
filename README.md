@@ -4,7 +4,7 @@ Register customers on checkout with Craft Commerce
 
 ## Installation
 
-To install Commerce Register on Checkout, follow these steps:
+To install Commerce Register on Checkout (CROC), follow these steps:
 
 1. Downloaded the latest release
 2. Unzip and copy the plugin folder `commerceregisteroncheckout` to your `craft/plugins` folder
@@ -108,23 +108,33 @@ Here's some sketch code to get you started:
 ```
 
 
+## Events
+
+CROC offers an event on the completion of succesful user registration `onRegisterComplete`.
+
+The event paramters are the Order and User models.
+
+You can listen and act on this event if needed, e.g.:
+
+```
+
+        craft()->on('commerceregisteroncheckout.onRegisterComplete', function($event){
+
+            $order = $event->params['order'];
+            $user = $event->params['user'];
+
+            ...etc
+
+        }
+
+```
+
+
 ## Commerce Register on Checkout Changelog
 
-### 0.0.4 -- 2017.01.21
+See [releases.json](https://github.com/bossanova808/CommerceRegisterOnCheckout/blob/master/releases.json)
 
-* Immediately sets the last used billing and shipping address IDs on the commerce_customer record so next time they login they will have their addresses ready to use
-
-### 0.0.3 -- 2017.01.18
-
-* Fix bug in db creation
-
-### 0.0.2 -- 2016.12.06
-
-* Works with offsite gateways.  Required breaking changes so review the docs!!
-
-### 0.0.1 -- 2016.09.06
-
-* Initial release
+## Who is to blame?
 
 Brought to you by [Jeremy Daalder](https://github.com/bossanova808)
 
