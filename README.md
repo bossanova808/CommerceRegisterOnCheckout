@@ -17,7 +17,7 @@ Commerce Register on Checkout has been tested with Craft 2.6+ and Commerce 1.1+,
 
 This plugin allows you to more easily add user registration as part of your Commerce checkout process.  
 
-Currently only allows for regsitering users with their username set to their email - however given commerce keys everything by the email, this is the most natural set up anyway.
+Currently only allows for registering users with their username set to their email - however given commerce keys everything by the email, this is the most natural set up anyway.
 
 As of 0.0.6 it also transfers address records and sets the last used billing and shipping address IDs so that the newly created Craft Users immediately get access to their address records in their address book for their next order (this does not occur if you integrate a standard Craft registration form).
 
@@ -27,7 +27,7 @@ An easy solution to this issue is to present a mostly pre-filled form to the use
 
 See discussion here: https://craftcms.stackexchange.com/questions/18974/register-a-user-as-part-of-a-commerce-checkout/18993#18993
 
-In short, this plugin  allows for a more integrated approach - registering the user _during_ the actual chefkout, which signifcantly increases the number of users that will register, and this has many potential business benefits of course.
+In short, this plugin  allows for a more integrated approach - registering the user _during_ the actual checkout, which signifcantly increases the number of users that will register, and this has many potential business benefits of course.
 
 In addition, if you use a standard registration form, your customers will need to re-enter their address details when they do their second order as these are not automatically transferred with the registration (order records are, but not addresses).
 
@@ -39,7 +39,7 @@ You can turn on some extra logging in the plugin settings - it's probably fine t
 
 At any point in your checkout flow before the final payment/order completion, you need to make one additional POST request.  I do this by ajax just before the payment form is submitted.
 
-This request must post the users desired password to the `saveRegistrationDetails` controller.  This password is then encyrypted using Craft's built in encryption mechanisms, and saved along with the order number to a temporary database record.
+This request must post the users desired password to the `saveRegistrationDetails` controller.  This password is then encrypted using Craft's built in encryption mechanisms, and saved along with the order number to a temporary database record.
 
 It's very simple, here's some sample code:
 
@@ -73,7 +73,7 @@ JS:
 
 (NB - as above you should validate the password on the front end to make sure it meets Craft's minimum 6 character requirement, or the user registration later may fail).
 
-The plugin then listens to the `commerce_orders.onOrderComplete` event.  For each completed order it looks for a saved record, and if it finds one then registers the user.  It will also immediately log them in, and assign  them to the default user group, just like a normal user registration.
+The plugin then listens to the `commerce_orders.onOrderComplete` event.  For each completed order it looks for a saved record, and if it finds one then registers the user.  It will also immediately log them in, and assign them to the default user group, just like a normal user registration.
 
 ## Handling Success & Errors
 
@@ -112,7 +112,7 @@ Here's some sketch code to get you started:
 
 CROC offers an event on the completion of succesful user registration `onRegisterComplete`.
 
-The event paramters are the Order and User models.
+The event parameters are the Order and User models.
 
 You can listen and act on this event if needed, e.g.:
 
