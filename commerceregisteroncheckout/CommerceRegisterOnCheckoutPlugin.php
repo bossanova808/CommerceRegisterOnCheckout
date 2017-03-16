@@ -190,7 +190,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
         
         // Added this...
         $mysqlEdge = $edge->format('Y-m-d H:i:s');
-        craft()->db->createCommand()->delete("commerceregisteroncheckout", "dateUpdated <= :mysqlEdge", array(':mysqlEdge' => $mysqlEdge));
+        craft()->db->createCommand()->delete("commerceregisteroncheckout", "`dateUpdated` <= :mysqlEdge", array(':mysqlEdge' => $mysqlEdge));
 
     }
 
