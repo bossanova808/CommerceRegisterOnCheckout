@@ -19,7 +19,7 @@ This plugin allows you to more easily add user registration as part of your Comm
 
 Currently only allows for registering users with their username set to their email - however given commerce keys everything by the email, this is the most natural set up anyway.
 
-As of 0.0.6 it also transfers address records and sets the last used billing and shipping address IDs so that the newly created Craft Users immediately get access to their address records in their address book for their next order (this does not occur if you integrate a standard Craft registration form).
+As of 0.0.6+ it also transfers address records and sets the last used billing and shipping address IDs so that the newly created Craft Users immediately get access to their address records in their address book for their next order (this does not occur if you integrate a standard Craft registration form).
 
 ## Why Not Use A Standard Craft Registation Form?
 
@@ -29,7 +29,7 @@ See discussion here: https://craftcms.stackexchange.com/questions/18974/register
 
 In short, this plugin  allows for a more integrated approach - registering the user _during_ the actual checkout, which signifcantly increases the number of users that will register, and this has many potential business benefits of course.
 
-In addition, if you use a standard registration form, your customers will need to re-enter their address details when they do their second order as these are not automatically transferred with the registration (order records are, but not addresses).
+In addition, if you use a standard registration form, your customers will need to re-enter their address details when they do their second order as these are not automatically transferred with the registration (order records are, but not addresses). This is less than ideal from a UX perspective.
 
 ## Configuring Commerce Register on Checkout
 
@@ -71,7 +71,7 @@ JS:
             }
         }
 
-(NB - as above you should validate the password on the front end to make sure it meets Craft's minimum 6 character requirement, or the user registration later may fail).
+(NB - as above you should also validate the password on the front end to make sure it meets Craft's minimum 6 character requirement, or the user registration later may fail).
 
 The plugin then listens to the `commerce_orders.onOrderComplete` event.  For each completed order it looks for a saved record, and if it finds one then registers the user.  It will also immediately log them in, and assign them to the default user group, just like a normal user registration.
 

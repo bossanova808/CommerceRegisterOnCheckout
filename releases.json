@@ -1,5 +1,13 @@
 [
     {
+        "version": "0.0.9",
+        "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.8.zip",
+        "date": "2017-03-27T00:00:01.001Z",
+        "notes": [
+            "[Fixed] Use Query Builder (thanks Tom Sullivan)"
+        ]
+    },
+    {
         "version": "0.0.8",
         "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.8.zip",
         "date": "2017-03-16T00:00:01.001Z",
