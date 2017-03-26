@@ -17,7 +17,6 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
 {
 
     protected static $settings;
-    protected static $tableName;
 
     /**
      * Static log functions for this plugin
@@ -178,7 +177,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
     private function cleanUp($order){
 
         // Delete the DB record for this order
-        craft()->db->createCommand()->setText("delete from " . self::$tableName ." where orderNumber='" . $order->number . "'")->execute();
+        craft()->db->createCommand()->delete("commerceregisteroncheckout", array("orderNumber" => $order->number));
 
         // Also take the chance to clean out any old order records that are associated with incomplete carts older than the purge duration
         // Code from getCartsToPurge in Commerce_CartService.php
@@ -191,7 +190,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
         
         // Added this...
         $mysqlEdge = $edge->format('Y-m-d H:i:s');
-        craft()->db->createCommand()->setText("delete from " . self::$tableName ." where dateUpdated<='" . $mysqlEdge . "'")->execute();
+        craft()->db->createCommand()->delete("commerceregisteroncheckout", "`dateUpdated` <= :mysqlEdge", array(':mysqlEdge' => $mysqlEdge));
 
     }
 
@@ -202,7 +201,6 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
     public function init(){
 
         self::$settings = $this->getSettings();
-        self::$tableName = craft()->config->get('tablePrefix', ConfigFile::Db) . "_" . "commerceregisteroncheckout";
 
         // Listen to onOrderComplete (not onBefore...) as we definitely don't want to make submitting orders have more potential issues...
         // We check our DB for a registration record, if there is one, we complete registration & for security delete the record
@@ -211,7 +209,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
             $order = $event->params['order'];
 
             //Get all records, latest first
-            $result = craft()->db->createCommand()->setText("select * from " . self::$tableName ." where orderNumber='" . $order->number ."' ORDER BY dateUpdated DESC")->queryAll();
+            $result = craft()->db->createCommand()->select()->from("commerceregisteroncheckout")->where(array("orderNumber" => $order->number))->order(array("dateUpdated DESC"))->queryAll();
 
             // Short circuit if we don't have registration details for this order
             if (!$result){
@@ -288,7 +286,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
                 craft()->httpSession->add("registered", true);
 
                 //Try & copy the last used addresses into the new record
-                $res = craft()->db->createCommand()->setText("select * from craft_commerce_customers where email='" . $order->email ."' ORDER BY dateUpdated DESC")->queryAll();
+                $res = craft()->db->createCommand()->select()->from("commerce_customers")->where(array("email" => $order->email))->order(array("dateUpdated DESC"))->queryAll();
 
                 //CommerceRegisterOnCheckoutPlugin::log($res);
 
