@@ -45,7 +45,7 @@ It's very simple, here's some sample code:
 
 HTML Form:
 
-    <input type="checkbox" value="true" name="registerUser" checked>
+    <input type="checkbox" value="true" id="registerUser" name="registerUser" checked>
     <input type="password" value="" placeholder="New Password (min. 6 characters)" name="password">
 
 JS:
