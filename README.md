@@ -50,6 +50,12 @@ HTML Form:
 
 JS:
 
+Somehere in e.g. your master layout set a variable to the CSRF token value (if you're using CSRF verification):
+
+        window.csrfTokenValue = "{{ craft.request.csrfToken|e('js') }}"
+
+Then the JS you need is just:
+
         if ($('#registerUser').prop('checked')) {
             var pw_value = $('input[type="password"]').val();
             var pw_error = '';
