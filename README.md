@@ -98,7 +98,7 @@ Here's some sketch code to get you started:
     {% if registered|length %}
 
         {# Success, if true #}
-        {% if craft.commerceRegisterOnCheckout.checkoutRegistration().registered %}
+        {% if registered %}
             <do some stuff>
         
         {# Failure, otherwise #}
