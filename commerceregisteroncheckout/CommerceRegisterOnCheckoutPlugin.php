@@ -272,7 +272,9 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
             $user->firstName        = $firstName;
             $user->lastName         = $lastName;
             $user->newPassword      = $password;
- 
+
+            craft()->commerceRegisterOnCheckout->onBeforeRegister($order, $user);
+
             $success = craft()->users->saveUser($user);
 
             if ($success) {
