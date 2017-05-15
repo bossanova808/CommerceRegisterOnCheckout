@@ -116,11 +116,24 @@ Here's some sketch code to get you started:
 
 ## Events
 
-CROC offers an event on the completion of succesful user registration `onRegisterComplete`.
+CROC offers an event before attempting to save the new user `onBeforeRegister`, and on the completion of succesful user registration `onRegisterComplete`.
 
-The event parameters are the Order and User models.
+The event parameters for both events are the Order and User models.
 
-You can listen and act on this event if needed, e.g.:
+You can listen and act on these events if needed, e.g.:
+
+```
+
+        craft()->on('commerceregisteroncheckout.onBeforeRegister', function($event){
+
+            $order = $event->params['order'];
+            $user = $event->params['user'];
+
+            ...etc
+
+        }
+
+```
 
 ```
 
