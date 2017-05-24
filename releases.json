@@ -1,5 +1,13 @@
 [
     {
+        "version": "0.0.11",
+        "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.11.zip",
+        "date": "2017-04-16T00:45:00.000Z",
+        "notes": [
+            "[Fixed] Do not allow empty passwords (thanks Tom Sullivan)"
+        ]
+    },
+    {
         "version": "0.0.10",
         "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.10.zip",
         "date": "2017-04-16T00:45:00.000Z",
