@@ -17,7 +17,16 @@ class CommerceRegisterOnCheckoutController extends BaseController
         $cart = craft()->commerce_cart->getCart();
         $vars = craft()->request->getPost();
 
-        $password = $vars['password'];
+        $password = $vars["password"];
+        if(!$password){
+            // Password is required (encryption of empty string fails)
+            if($ajax){
+                $this->returnErrorJson("Password cannot be empty");
+            } else {
+                throw new HttpException(400, Craft::t("Password cannot be empty"));
+            }
+        }
+
         $encryptedPassword = base64_encode(craft()->security->encrypt($password));
 
         $number = 0;
