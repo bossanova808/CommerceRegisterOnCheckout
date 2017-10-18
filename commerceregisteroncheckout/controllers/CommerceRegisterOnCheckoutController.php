@@ -10,8 +10,9 @@ class CommerceRegisterOnCheckoutController extends BaseController
 
         //Must be called by POST
         $this->requirePostRequest();
+        $url = craft()->request->getUrlReferrer();
 
-        CommerceRegisterOnCheckoutPlugin::log("actionSaveRegistrationDetails");
+        CommerceRegisterOnCheckoutPlugin::log("actionSaveRegistrationDetails (from: $url )");
 
         $ajax = craft()->request->isAjaxRequest();
         $cart = craft()->commerce_cart->getCart();

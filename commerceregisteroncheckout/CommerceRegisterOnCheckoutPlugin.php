@@ -87,7 +87,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function getVersion()
     {
-        return '0.0.11';
+        return '0.0.12';
     }
 
     /**
@@ -190,7 +190,9 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
         
         // Added this...
         $mysqlEdge = $edge->format('Y-m-d H:i:s');
-        craft()->db->createCommand()->delete("commerceregisteroncheckout", "`dateUpdated` <= :mysqlEdge", array(':mysqlEdge' => $mysqlEdge));
+        $success = craft()->db->createCommand()->delete("commerceregisteroncheckout", "`dateUpdated` <= :mysqlEdge", array(':mysqlEdge' => $mysqlEdge));
+
+        CommerceRegisterOnCheckoutPlugin::log("Cleaned records from before cart purge duration date: $mysqlEdge (result: $success)");
 
     }
 
@@ -208,12 +210,14 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
 
             $order = $event->params['order'];
 
+            CommerceRegisterOnCheckoutPlugin::log("Customer id is: $order->customerId");
+
             //Get all records, latest first
             $result = craft()->db->createCommand()->select()->from("commerceregisteroncheckout")->where(array("orderNumber" => $order->number))->order(array("dateUpdated DESC"))->queryAll();
 
             // Short circuit if we don't have registration details for this order
             if (!$result){
-                CommerceRegisterOnCheckoutPlugin::log("Register on checkout record not found for order: " . $order->number);
+                CommerceRegisterOnCheckoutPlugin::log("Register on checkout record not found for order : " . $order->number . " - short circuiting here");
                 return true;
             }
                 
@@ -288,30 +292,26 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
                 craft()->httpSession->add("registered", true);
 
                 //Try & copy the last used addresses into the new record
-                $res = craft()->db->createCommand()->select()->from("commerce_customers")->where(array("email" => $order->email))->order(array("dateUpdated DESC"))->queryAll();
+                // We have to get the OLD commerce_customer record, and the new one...
+                $old = craft()->db->createCommand()->select()->from("commerce_customers")->where(array("id" => $order->customerId))->order(array("dateUpdated DESC"))->queryAll();
+                $new = craft()->db->createCommand()->select()->from("commerce_customers")->where(array("userId" => $user->id))->order(array("dateUpdated DESC"))->queryAll();
 
-                //CommerceRegisterOnCheckoutPlugin::log($res);
+                if ($old && $new) {
 
-                if ($res) {
-                    // $id will be the new customer record Id,  $oldId is the old customer record Id.
-                    try{
-                        $newId = $res[0]['id'];
-                        $oldId = $res[1]['id'];
-                        // ....the new Craft user id
-                        $userId = $res[0]['userId'];
-                        CommerceRegisterOnCheckoutPlugin::log("Updating customer and address records for newly created user.  NewId: $newId, OldId: $oldId, Craft User id: $userId");
-                    }
-                    catch (Exception $e) {
-                        CommerceRegisterOnCheckoutPlugin::logError("Issue retrieving newId, oldId, or userId  - can't update addresses to new user.");  
-                        CommerceRegisterOnCheckoutPlugin::logError($e);
-                        // User registration did work, though....
-                        craft()->commerceRegisterOnCheckout->onRegisterComplete($order, $user);
-                        return true;
-                    }
+                    $oldId = $old[0]['id'];
+                    $newId = $new[0]['id'];
+                    $userId = $user->id;
+      
+                    // CommerceRegisterOnCheckoutPlugin::log($old);
+                    // CommerceRegisterOnCheckoutPlugin::log($new);
+                    // CommerceRegisterOnCheckoutPlugin::log($userId);
+                   
+                    CommerceRegisterOnCheckoutPlugin::log("Updating customer and address records for newly created user.  NewId: $newId, OldId: $oldId, Craft User id: $userId");
 
                     // First try and update the last used addresses in new record in the commerce_customers table
                     try {
                         $updateResult = craft()->db->createCommand()->update('commerce_customers',['lastUsedShippingAddressId'=>$lastUsedShippingAddressId, "lastUsedBillingAddressId"=>$lastUsedBillingAddressId], 'id=:id', array(':id'=>$newId));
+                        
                         CommerceRegisterOnCheckoutPlugin::log("Updated ($updateResult) customer records. To lusaId: $lastUsedShippingAddressId, lubaId: $lastUsedBillingAddressId");
                     }
                     catch (Exception $e) {
@@ -332,10 +332,21 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
             
                 }
                 else {
-                    CommerceRegisterOnCheckoutPlugin::logError("Couldn't find the guest user for the lastUsedAddress Ids");
+                    CommerceRegisterOnCheckoutPlugin::logError("Couldn't find the records needed to copy over the addresses");
+                    CommerceRegisterOnCheckoutPlugin::logError($old);
+                    CommerceRegisterOnCheckoutPlugin::logError($new);
                 }
 
                 craft()->commerceRegisterOnCheckout->onRegisterComplete($order, $user);
+
+                // 2017-10 - this is a local hack to re-run our business logic for onOrderComplete code for new users...
+                // Needed because we can't guarantee order of execution of plugins... :(    
+                // DOES not run for other plugin users....
+                if(isset(craft()->config->get('environmentVariables')['IsImageScience'])){
+                    CommerceRegisterOnCheckoutPlugin::log("Re-run [onOrderComplete] as now we have a new user.");
+                    craft()->businessLogic_logic->onOrderCompleteHandler($event);
+                    CommerceRegisterOnCheckoutPlugin::log("...done");
+                }
                 return true;
             }
 

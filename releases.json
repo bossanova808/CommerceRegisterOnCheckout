@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.0.12",
+        "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.12.zip",
+        "date": "2017-10-18T00:45:00.000Z",
+        "notes": [
+            "[Fixed] NB ***Required update** Needed for latest Commerce changes (remove of email from commerce_customers table in favour of order->email)",
+            "[Fixed] Update docs with example to explain that you must run your actual payment only AFTER the registration details are lodged",
+            "[Improved] Better logging"
+        ]
+    },
+    {
         "version": "0.0.11",
         "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.11.zip",
         "date": "2017-04-16T00:45:00.000Z",

@@ -54,17 +54,20 @@ Somehere in e.g. your master layout set a variable to the CSRF token value (if y
 
         window.csrfTokenValue = "{{ craft.request.csrfToken|e('js') }}"
 
-Then the JS you need is just:
+Then the JS you need is just something like this:
 
+        // Has the customer chosen to register an account?
         if ($('#registerUser').prop('checked')) {
             var pw_value = $('input[type="password"]').val();
             var pw_error = '';
+            // Validate the passwrod meets Craft's rules
             if (pw_value.length < 6) {
                 pw_error = "Password length must be 6 or more characters";
             }
             if (pw_error) {
                 alert(pw_error);
             }
+            // Lodge the registration details for later retrieval
             else {
                 $.ajax({
                     type: 'POST',
@@ -73,11 +76,23 @@ Then the JS you need is just:
                         CRAFT_CSRF_TOKEN: window.csrfTokenValue,
                         password: pw_value,
                     }
+                    complete: {
+                        // NB! Your call to your payment function must 
+                        // run only AFTER the registration details have been lodged
+                        // So pop it here...
+                        doPayment();
+                    }
                 });
             }
         }
+        // Register account not chosen, just do the actual payment...
+        else {
+            doPayment();
+        }
 
 (NB - as above you should also validate the password on the front end to make sure it meets Craft's minimum 6 character requirement, or the user registration later may fail).
+
+`doPayment` is of course your own function that will actually submit your payment form.
 
 The plugin then listens to the `commerce_orders.onOrderComplete` event.  For each completed order it looks for a saved record, and if it finds one then registers the user.  It will also immediately log them in, and assign them to the default user group, just like a normal user registration.
 
