@@ -24,7 +24,8 @@ class CommerceRegisterOnCheckoutController extends BaseController
             if($ajax){
                 $this->returnErrorJson("Password cannot be empty");
             } else {
-                throw new HttpException(400, Craft::t("Password cannot be empty"));
+                craft()->userSession->setError(Craft::t('Password must be at least 6 characters in length'));
+                $this->redirect($url);
             }
         }
 
