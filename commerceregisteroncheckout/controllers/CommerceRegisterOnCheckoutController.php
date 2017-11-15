@@ -51,6 +51,8 @@ class CommerceRegisterOnCheckoutController extends BaseController
         // Appropriate Ajax responses...
         if($ajax){
             $this->returnJson(["success"=>true]);
+        } else {
+            $this->redirectToPostedUrl();
         }
 
     }
