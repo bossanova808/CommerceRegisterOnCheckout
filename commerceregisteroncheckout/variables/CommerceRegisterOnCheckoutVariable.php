@@ -20,16 +20,18 @@ class CommerceRegisterOnCheckoutVariable
      */
     public function checkoutRegistered(){
 
-        $return = "";
+        $return = null;
         
         $registered = craft()->httpSession->get("registered");
-        if($registered) $return = $registered;
-        
-        // For some reason these functions are called multiple times on the order complete template...
-        // So we can't remove them here.
-        //craft()->httpSession->remove("registered");
+        if(is_bool($registered)){
+            $return = $registered;
+        }
 
         return $return;
+    }
+    
+    public function clearRegistered(){
+        craft()->httpSession->remove("registered");
     }
 
     public function checkoutAccount(){
