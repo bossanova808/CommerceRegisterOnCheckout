@@ -106,11 +106,13 @@ Here's some sketch code to get you started:
 
     {# Get the results of user registration, if there are any... #}
     {% set registered = craft.commerceRegisterOnCheckout.checkoutRegistered ?? null %}
+    {% do craft.commerceRegisterOnCheckout.clearRegistered %}
     {% set account = craft.commerceRegisterOnCheckout.checkoutAccount ?? null %}
+    {% do craft.commerceRegisterOnCheckout.clearRegistered %}
 
 
     {# Was registration attempted? #}
-    {% if registered|length %}
+    {% if registered is not null %}
 
         {# Success, if true #}
         {% if registered %}
@@ -121,7 +123,7 @@ Here's some sketch code to get you started:
             {% if account|length %}
                 {% if "has already been taken" in account.getError('email') %}
 
-                ... Point ou they are already registered...
+                ... Point out they are already registered...
                 
             {% else %}
                 ...etc, e.g. present a user registration form with as much filled in as possible>
