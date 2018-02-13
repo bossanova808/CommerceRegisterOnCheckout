@@ -29,10 +29,6 @@ class CommerceRegisterOnCheckoutVariable
 
         return $return;
     }
-    
-    public function clearRegistered(){
-        craft()->httpSession->remove("registered");
-    }
 
     public function checkoutAccount(){
 
@@ -41,11 +37,12 @@ class CommerceRegisterOnCheckoutVariable
         $account = craft()->httpSession->get("account");
         if($account) $return = $account;
 
-        // For some reason these functions are called multiple times on the order complete template...
-        // So we can't remove them here.        
-        //craft()->httpSession->remove("account");
-
         return $return;
+    }
+    
+    public function clearRegistered(){
+        craft()->httpSession->remove("registered");
+        craft()->httpSession->remove("account");
     }
 
 
