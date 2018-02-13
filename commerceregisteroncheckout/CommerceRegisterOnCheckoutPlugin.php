@@ -87,7 +87,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
      */
     public function getVersion()
     {
-        return '0.0.12';
+        return '0.0.13';
     }
 
     /**
@@ -343,7 +343,7 @@ class CommerceRegisterOnCheckoutPlugin extends BasePlugin
                 // Needed because we can't guarantee order of execution of plugins... :(    
                 // DOES not run for other plugin users....
                 if(isset(craft()->config->get('environmentVariables')['IsImageScience'])){
-                    CommerceRegisterOnCheckoutPlugin::log("Re-run [onOrderComplete] as now we have a new user.");
+                    CommerceRegisterOnCheckoutPlugin::log("Image Science Only: Re-run [onOrderComplete] as now we have a new user.");
                     craft()->businessLogic_logic->onOrderCompleteHandler($event);
                     CommerceRegisterOnCheckoutPlugin::log("...done");
                 }

@@ -107,6 +107,8 @@ Here's some sketch code to get you started:
     {# Get the results of user registration, if there are any... #}
     {% set registered = craft.commerceRegisterOnCheckout.checkoutRegistered ?? null %}
     {% set account = craft.commerceRegisterOnCheckout.checkoutAccount ?? null %}
+
+    {# Explicitly clear the http session variables now that we've used them #}
     {% do craft.commerceRegisterOnCheckout.clearRegisterSession %}
 
 

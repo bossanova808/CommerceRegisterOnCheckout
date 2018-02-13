@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.0.13",
+        "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.13.zip",
+        "date": "2018-02-14T00:00:00.000Z",
+        "notes": [
+            "[Added] do `clearRegisterSession` to explicitly clear http session vars",
+            "[Fixed] Explicitly set registered to null if registration is not attempted"
+        ]
+    },
+    {
         "version": "0.0.12",
         "downloadUrl": "https://github.com/bossanova808/CommerceRegisterOnCheckout/archive/0.0.12.zip",
         "date": "2017-10-18T00:45:00.000Z",
