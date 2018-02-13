@@ -40,7 +40,7 @@ class CommerceRegisterOnCheckoutVariable
         return $return;
     }
     
-    public function clearRegistered(){
+    public function clearRegisterSession(){
         craft()->httpSession->remove("registered");
         craft()->httpSession->remove("account");
     }
