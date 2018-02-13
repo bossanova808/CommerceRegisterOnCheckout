@@ -106,9 +106,8 @@ Here's some sketch code to get you started:
 
     {# Get the results of user registration, if there are any... #}
     {% set registered = craft.commerceRegisterOnCheckout.checkoutRegistered ?? null %}
-    {% do craft.commerceRegisterOnCheckout.clearRegistered %}
     {% set account = craft.commerceRegisterOnCheckout.checkoutAccount ?? null %}
-    {% do craft.commerceRegisterOnCheckout.clearRegistered %}
+    {% do craft.commerceRegisterOnCheckout.clearRegisterSession %}
 
 
     {# Was registration attempted? #}
