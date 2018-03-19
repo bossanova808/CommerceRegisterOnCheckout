@@ -53,6 +53,10 @@ class CommerceRegisterOnCheckoutController extends BaseController
             $this->returnJson(["success"=>true]);
         }
 
+        //Re-direct to a results page if a url has been posted and this is not an ajax call
+        if($url){
+            $this->redirect($url);
+        }
     }
 
 }
