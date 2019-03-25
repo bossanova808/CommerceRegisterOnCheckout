@@ -1,3 +1,9 @@
+# THIS PLUGIN IS ARCHIVED
+
+Given Craft Commerce 2 now natively supports registration on checkout (see https://github.com/craftcms/commerce/issues/472) - this plugin will not be ported by me to Craft 3 / Commerce 2 (although before this official support came along, Foster Commerce did in fact port it over - thanks folks!).
+
+It remains here for anyone still using it with Commerce V1 or for reference if you find the [Commerce V2 implementation](https://github.com/FosterCommerce/CommerceRegisterOnCheckout) not enough - but there will be no more support or updates.
+
 # Commerce Register on Checkout plugin for Craft CMS
 
 Register customers on checkout with Craft Commerce
